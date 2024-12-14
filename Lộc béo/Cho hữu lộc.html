@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lời Chúc Du Học</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            overflow-x: hidden;
+        }
+
+        .intro {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            z-index: 1000;
+            transition: 0.5s;
+        }
+
+        .intro.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .intro-text {
+            color: white;
+            font-size: 2em;
+            text-align: center;
+            animation: glow 2s ease-in-out infinite alternate;
+            padding: 20px;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #4ecdc4;
+            }
+            to {
+                text-shadow: 0 0 20px #fff, 0 0 30px #4ecdc4, 0 0 40px #4ecdc4;
+            }
+        }
+
+        .main-content {
+            display: none;
+            padding: 15px;
+        }
+
+        .main-content.show {
+            display: block;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 10px auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+
+        .title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: clamp(18px, 5vw, 24px);
+        }
+
+        .photo-container {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 5px solid #4ecdc4;
+        }
+
+        .photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wishes-container {
+            position: relative;
+            height: 400px; 
+            margin-top: 20px;
+            overflow-y: auto; 
+            scrollbar-width: thin; 
+            scrollbar-color: #4ecdc4 #f0f2f5; 
+        }
+
+        .wishes-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .wishes-container::-webkit-scrollbar-track {
+            background: #f0f2f5;
+            border-radius: 4px;
+        }
+
+        .wishes-container::-webkit-scrollbar-thumb {
+            background: #4ecdc4;
+            border-radius: 4px;
+        }
+
+        .wishes-container::-webkit-scrollbar-thumb:hover {
+            background: #45b7af;
+        }
+
+        .wish {
+            position: relative; 
+            width: 100%;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.5s ease;
+            display: none;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .wish.active {
+            opacity: 1;
+            transform: translateY(0);
+            display: block;
+        }
+
+        .message-screenshot {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: block;
+        }
+
+        .message-text {
+            background: #f0f2f5;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 10px 0;
+            font-size: 16px;
+            line-height: 1.5;
+            max-height: none; 
+            overflow: visible; 
+        }
+
+        .author {
+            font-style: italic;
+            color: #666;
+            margin-top: 10px;
+            text-align: right;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            background: #4ecdc4;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button:hover {
+            background: #45b7af;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: #ddd;
+            margin-top: 15px;
+            border-radius: 2px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #4ecdc4;
+            width: 0;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .scroll-indicator {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            margin-top: 5px;
+            opacity: 0.7;
+        }
+
+        #surprise-video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        #surprise-video {
+            max-width: 90%;
+            max-height: 90%;
+            display: none;
+        }
+
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3000;
+        }
+
+        .confetti {
+            width: 15px;
+            height: 15px;
+            background-color: #f2d74e;
+            position: absolute;
+            left: 50%;
+            animation: confetti 5s ease-in-out -2s infinite;
+            transform-origin: left top;
+        }
+
+        .confetti:nth-child(2n) {
+            background-color: #95c3de;
+        }
+
+        .confetti:nth-child(3n) {
+            background-color: #ff9a91;
+        }
+
+        .confetti:nth-child(4n) {
+            background-color: #f2d74e;
+        }
+
+        .confetti:nth-child(5n) {
+            background-color: #63b0e4;
+        }
+
+        @keyframes confetti {
+            0% { transform: rotate(15deg) translateX(0); }
+            25% { transform: rotate(-18deg) translateX(-200px); }
+            50% { transform: rotate(15deg) translateX(200px); }
+            75% { transform: rotate(-18deg) translateX(-100px); }
+            100% { transform: rotate(15deg) translateX(0); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+                margin: 5px;
+            }
+            
+            .intro-text {
+                font-size: 1.5em;
+            }
+
+            .photo-container {
+                width: 120px;
+                height: 120px;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            .message-text {
+                font-size: 14px;
+                padding: 12px;
+            }
+
+            .wishes-container {
+                height: 350px; 
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            .container {
+                margin: 15px;
+            }
+
+            .photo-container {
+                width: 130px;
+                height: 130px;
+            }
+        }
+        .fade-out-effect {
+    animation: fadeOut 1s ease forwards; /* 1 giây mờ dần */
+    }
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+    </style>
+</head>
+<body>
+    <div class="intro">
+        <div class="intro-text">
+            Một vài bất ngờ phút cuối dành cho Hữu Lộc<br>
+            🎓 2024 🌟
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="photo-container">
+                <div class="photo">
+                    <img src="Lộc.jpg" alt="ảnh" class="photo">
+                </div>
+            </div>
+            <h1 class="title">❤️❤️❤️Lời chúc thân thương từ mọi người❤️❤️❤️</h1>
+            
+            <div class="wishes-container">
+                <div class="wish">
+                    <div class="message-text">
+                        Vậy thì a cũng k biết nói gì đâu nhưng a sẽ nói theo cảm xúc của a đối với a sân bóng rổ đó không chỉ đơn giản là sân bóng rổ nó là nơi kết nối mọi người với nhau có những lúc tụi mình vui vẻ hát hò chơi đùa là nơi để tạm cất lại những áp lực sau một ngày căng thẳng cũng có những bữa tiệc cuộc vui tổ chức trên sân có ae bên cạnh nhưng e biết rồi đó cuộc vui nào cũng có lúc tàn nên a luôn trân trọng những khoảnh khắc đó
+A với m ban đầu cũng k thân thiết mấy nhưng sau này cũng gọi là thân đi đối với a mn trên sân là đồng đội cũng như gia đình vậy nên với a m cũng là đứa e tinh thần của a 
+Lựa chọn con đường để đi trong tương lai là điều rất khó khăn nhưng cuộc sống mà nó ép mình phải vậy dù con đường có khó đi đến đâu cũng là con đường mình chọn a ủng hộ m nên là cố lên nha sân thì có thể dẹp nhưng mà gia đình mình còn cái gr buồn có thể nhắn lên đó hoặc nc riêng với a cũng đc
+Nhớ giữ sức khoẻ a vs m là dân thể thao thì cũng biết sức khoẻ quan trọng như nào rồi nên đừng để bị ốm
+Hợp rồi lại tan nhưng tan chưa chắc đã không hợp, a chỉ mong muốn tất cả mọi người có thể gặp lại nhau trên đỉnh nơi mà mình coi là đích đến, lần sau gặp a vẫn muốn thấy thằng Ki vui vẻ, nhây vl, tích cực nha và điều khác ở đây là thành công phải thành công nha
+Đã là con trai là không đc lùi bước cứ bước tiếp nếu phía trc mịt mù khiến m lo sợ thì cứ bước đại thêm 1 bước nữa đi vẫn hơn là đứng yên tại chỗ biết đâu lại thấy thứ mình cần tìm
+Cố lên nha, đồng đội. 
+                    </div>
+                    <div class="author">- a trai của Ki, MIN</div>
+                </div>
+                <div class="wish">
+                    <img src="Phúc Thạnh.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Phúc Thạnh</div>
+                </div>
+                <div class="wish">
+                    <img src="Chị của An.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Chị hai của bé An</div>
+                </div>
+                <div class="wish">
+                    <img src="Bảo Trung.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Bảo Trung Đẹp Trai Hơn Hữu Lộc</div>
+                </div>
+                <div class="wish">
+                    <img src="Anh Thu.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Bui Hoang Anh Thu</div>
+                </div>
+                <div class="wish">
+                    <img src="Bảo.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Bảo Nguyễn</div>
+                </div>
+                <div class="wish">
+                    <img src="Công Khang.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Công Khang</div>
+                </div>
+                <div class="wish">
+                    <img src="Dũng.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Dũng</div>
+                </div>
+                <div class="wish">
+                    <img src="Trĩ Quang.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Trí Quang</div>
+                </div>
+                <div class="wish">
+                    <img src="Thanh Bảo.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- TeeBee</div>
+                </div>
+                <div class="wish">
+                    <img src="Lê vinh.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Vinh Lê</div>
+                </div>
+                <div class="wish">
+                    <img src="My sói.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- My Ái Võ</div>
+                </div>
+                <div class="wish">
+                    <img src="Nguyễn Khoa.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Khoa Em</div>
+                </div>
+                <div class="wish">
+                    <img src="Việt Anh.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Việt Anh</div>
+                </div>
+                <div class="wish">
+                    <img src="Thái Bảo.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Thái Bảo</div>
+                </div>
+                <div class="wish">
+                    <img src="Hưng.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Hưng</div>
+                </div>
+                <div class="wish">
+                    <img src="Du.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Tuấn Du</div>
+                </div>
+                <div class="wish">
+                    <img src="Quốc Vinh.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Quốc Vinh</div>
+                </div>
+                <div class="wish">
+                    <img src="Anh Hiếu.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Hiếu Hai Dối</div>
+                </div>
+                <div class="wish">
+                    <img src="Phùng Khang.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Khang Họ Phùng</div>
+                </div>
+                <div class="wish">
+                    <img src="Anh Khánh.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Phạm Huỳnh Quốc</div>
+                </div>
+                <div class="wish">
+                    <img src="Bánh Tá.jpg" alt="tin nhắn" class="message-screenshot">
+                    <div class="author">- Bá Tánh</div>
+                </div>
+                <div class="wish">
+                    <video width="100%" height="auto" controls poster="thumbnail.jpg"> <!-- poster là hình ảnh thumbnail -->
+                        <source src="Đại và Tiền.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            
+            <div class="scroll-indicator">Kéo xuống để xem thêm nữa nè Hữu Ki ↓</div>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+
+            <div class="controls">
+                <button onclick="prevWish()">Trước</button>
+                <button onclick="nextWish()">Tiếp</button>
+            </div>
+        </div>
+    </div>
+    <div class="confetti-container"></div>
+
+    <script>
+        // Xử lý intro
+        setTimeout(() => {
+            document.querySelector('.intro').classList.add('fade-out');
+            document.querySelector('.main-content').classList.add('show');
+        }, 3000);
+    
+        const wishes = document.querySelectorAll('.wish');
+        const progressBar = document.querySelector('.progress-bar');
+        const wishesContainer = document.querySelector('.wishes-container');
+        const scrollIndicator = document.querySelector('.scroll-indicator');
+        let currentWish = 0;
+    
+        // Hiển thị/ẩn indicator cuộn
+        wishesContainer.addEventListener('scroll', () => {
+            if (wishesContainer.scrollHeight > wishesContainer.clientHeight) {
+                scrollIndicator.style.display = 'block';
+            } else {
+                scrollIndicator.style.display = 'none';
+            }
+        });
+    
+        function updateProgressBar() {
+            const progress = ((currentWish + 1) / wishes.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+    
+        function showWish(index) {
+            wishes.forEach(wish => wish.classList.remove('active'));
+            wishes[index].classList.add('active');
+            updateProgressBar();
+            // Cuộn lên đầu container khi chuyển wish
+            wishesContainer.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    
+        function nextWish() {
+            currentWish = (currentWish + 1) % wishes.length;
+            showWish(currentWish);
+        }
+    
+        function prevWish() {
+            currentWish = (currentWish - 1 + wishes.length) % wishes.length;
+            showWish(currentWish);
+        }
+    
+        // Hiển thị wish đầu tiên
+        showWish(currentWish);
+    
+        // Dừng tự động chuyển khi người dùng tương tác với nút
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', () => {
+                clearInterval(autoSlideInterval);
+                autoSlideInterval = setInterval(nextWish, 4000);
+            });
+        });
+        const video = document.querySelector('video');
+
+video.addEventListener('ended', () => {
+    // Thêm class để mờ dần toàn bộ nội dung
+    document.body.classList.add('fade-out-effect');
+
+    // Sau 1 giây, chuyển hướng hoặc thực hiện hành động khác
+    setTimeout(() => {
+        // Ví dụ: Chuyển hướng đến trang khác
+        // window.location.href = 'https://www.example.com';
+
+        // Hoặc hiển thị một thông báo
+        alert("Video đã kết thúc!");
+    }, 1000);
+});
+
+    </script>
+</body>
+</html>
